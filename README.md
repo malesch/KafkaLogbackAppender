@@ -1,0 +1,2 @@
+# KafkaLogbackAppender
+Simple Logback appender 
