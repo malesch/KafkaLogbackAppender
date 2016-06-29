@@ -1,6 +1,8 @@
 package com.calclab.kafka;
 
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.PatternLayout;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import com.calclab.kafka.helper.TestUtils;
 import junit.framework.TestCase;
 import org.junit.Assert;
@@ -71,5 +73,50 @@ public class KakfaLogbackAppenderTest extends TestCase {
 
         ArrayList<String> sentMessages = TestUtils.getTopicQueueMessages(logger, topic);
         Assert.assertEquals(testMessages, sentMessages);
+    }
+
+    @Test
+    public void testEncoder() {
+        String topic = "Encoder";
+
+        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setPattern("PatternTest %level %msg");
+
+        Logger logger = TestUtils.createKafkaLogger(topic, 0, false, encoder, null);
+        logger.info("FooBarBaz!!!");
+        ArrayList<String> sentMessages = TestUtils.getTopicQueueMessages(logger, topic);
+
+        Assert.assertEquals("PatternTest INFO FooBarBaz!!!", sentMessages.get(0));
+    }
+
+    @Test
+    public void testLayout() {
+        String topic = "Layout";
+
+        PatternLayout layout = new PatternLayout();
+        layout.setPattern("LayoutTest %level %msg");
+
+        Logger logger = TestUtils.createKafkaLogger(topic, 0, false, null, layout);
+        logger.info("FooBarBaz!!!");
+        ArrayList<String> sentMessages = TestUtils.getTopicQueueMessages(logger, topic);
+
+        Assert.assertEquals("LayoutTest INFO FooBarBaz!!!", sentMessages.get(0));
+    }
+
+    @Test
+    public void testEncoderAndLayout() {
+        String topic = "EncoderAndLayout";
+
+        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setPattern("EncoderAndLayout %level %msg");
+
+        PatternLayout layout = new PatternLayout();
+        layout.setPattern("ThisShouldNotAppear %level %msg");
+
+        Logger logger = TestUtils.createKafkaLogger(topic, 0, false, encoder, layout);
+        logger.info("FooBarBaz!!!");
+        ArrayList<String> sentMessages = TestUtils.getTopicQueueMessages(logger, topic);
+
+        Assert.assertEquals("EncoderAndLayout INFO FooBarBaz!!!", sentMessages.get(0));
     }
 }
