@@ -87,7 +87,7 @@ The appender takes the available Kafka Producer parameters (see [ProductConfig] 
 </configuration>
 ```
 
-##License
+## License
 
 Copyright © 2016 Marcus Spiegel
 
